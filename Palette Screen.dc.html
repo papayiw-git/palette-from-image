@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @keyframes ps-spin{to{transform:rotate(360deg)}}
+    @keyframes ps-pop{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
+  </style>
+</helmet>
+<div style="height:100%;min-height:100%;display:flex;flex-direction:column;background:#f7f4ef;color:#1c1917;font-family:'Inter',system-ui,sans-serif;position:relative;overflow:hidden;">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-bottom:1px solid #e9e3d9;flex:none;">
+    <div style="display:flex;align-items:baseline;gap:9px;">
+      <span style="font-family:'Newsreader',serif;font-size:20px;font-weight:600;letter-spacing:-.015em;">Palette</span>
+      <span style="font-size:10px;color:#857c70;letter-spacing:.14em;text-transform:uppercase;font-weight:500;">from image</span>
+    </div>
+    <sc-if value="{{ showReset }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ back }}" style="padding:7px 14px;border:1px solid #e9e3d9;background:#fff;color:#1c1917;border-radius:999px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;">New image</button>
+    </sc-if>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;flex-direction:column;">
+
+    <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+      <div style="margin:14px 22px 0;padding:12px 15px;display:flex;align-items:center;gap:10px;background:#fbeae5;border:1px solid #f0c4b6;border-radius:12px;color:#8a3115;font-size:13px;">
+        <span style="flex:1;">That file is over 12&nbsp;MB. Please try a smaller image.</span>
+        <button onClick="{{ back }}" style="border:none;background:transparent;color:#8a3115;font-size:17px;line-height:1;cursor:pointer;padding:0 4px;">×</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showUpload }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:36px 24px;gap:24px;">
+        <div style="text-align:center;max-width:380px;">
+          <div style="font-family:'Newsreader',serif;font-weight:500;font-size:26px;line-height:1.14;letter-spacing:-.02em;margin-bottom:8px;">Pull a palette from any image</div>
+          <div style="color:#857c70;font-size:13.5px;line-height:1.5;">Upload a photo or mood board. We extract the dominant colors, their codes, and how much of the frame each fills.</div>
+        </div>
+        <div onClick="{{ go }}" style="width:100%;max-width:440px;border:2px dashed #d9d0c2;border-radius:18px;background:#fff;padding:34px 28px;display:flex;flex-direction:column;align-items:center;gap:14px;cursor:pointer;text-align:center;">
+          <div style="width:48px;height:48px;border-radius:50%;background:#f4efe7;display:flex;align-items:center;justify-content:center;color:#857c70;">
+            <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><circle cx="8.5" cy="9.5" r="1.8"></circle><path d="M21 16l-5-5-7 7"></path></svg>
+          </div>
+          <div>
+            <div style="font-size:15px;font-weight:600;margin-bottom:3px;">Drop an image here</div>
+            <div style="font-size:12.5px;color:#857c70;">or click to browse · JPG, PNG, WebP · up to 12&nbsp;MB</div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;">
+          <span style="font-size:11px;color:#857c70;letter-spacing:.06em;text-transform:uppercase;">No image handy? Try one</span>
+          <div style="display:flex;gap:10px;">
+            <button onClick="{{ go }}" style="width:80px;height:58px;border:1px solid #e9e3d9;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,#f7d9b5,#e9a87c,#bb7e93,#3f6e6a);box-shadow:0 1px 3px rgba(0,0,0,.06);"></button>
+            <button onClick="{{ go }}" style="width:80px;height:58px;border:1px solid #e9e3d9;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,#e0e8f0,#a6bccf,#5d7d9c,#21384e);box-shadow:0 1px 3px rgba(0,0,0,.06);"></button>
+            <button onClick="{{ go }}" style="width:80px;height:58px;border:1px solid #e9e3d9;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,#ffe1ea,#ffb0c4,#f76f95,#7d2545);box-shadow:0 1px 3px rgba(0,0,0,.06);"></button>
+          </div>
+          <sc-if value="{{ canError }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ simErr }}" style="margin-top:2px;border:none;background:transparent;color:#a99c88;font-size:11.5px;text-decoration:underline;cursor:pointer;font-family:inherit;">Simulate an upload error</button>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:15px;">
+        <div style="width:32px;height:32px;border:3px solid #e0d8cb;border-top-color:#1c1917;border-radius:50%;animation:ps-spin .8s linear infinite;"></div>
+        <span style="font-size:13.5px;color:#857c70;">Reading colors…</span>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:flex;flex-wrap:wrap;gap:20px;padding:22px;align-content:flex-start;">
+        <div style="flex:1 1 280px;min-width:0;min-height:220px;border-radius:14px;background:linear-gradient(135deg,#E4B48C 0%,#C98F6E 22%,#7B9A92 45%,#B5746A 64%,#3F5E58 82%,#E8D5BE 100%);border:1px solid #e9e3d9;box-shadow:0 1px 3px rgba(0,0,0,.05);"></div>
+
+        <div style="flex:1 1 360px;min-width:0;display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <div style="font-size:11px;color:#857c70;letter-spacing:.06em;text-transform:uppercase;margin-bottom:7px;">Proportions</div>
+            <div style="display:flex;height:16px;border-radius:6px;overflow:hidden;border:1px solid #e9e3d9;">
+              <sc-for list="{{ colors }}" as="c" hint-placeholder-count="6">
+                <div style="{{ c.ribbonStyle }}"></div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #e9e3d9;border-radius:14px;padding:12px 14px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;justify-content:space-between;">
+            <span style="font-size:12.5px;font-weight:600;">6 colors</span>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;">
+              <button onClick="{{ copyHex }}" style="{{ pillStyle }}">Copy HEX</button>
+              <button onClick="{{ copyRgb }}" style="{{ pillStyle }}">Copy RGB</button>
+              <button onClick="{{ copyCss }}" style="{{ pillStyle }}">CSS vars</button>
+              <button onClick="{{ copyJson }}" style="{{ pillStyle }}">JSON</button>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:12px;">
+            <sc-for list="{{ colors }}" as="c" hint-placeholder-count="6">
+              <div style="background:#fff;border:1px solid #e9e3d9;border-radius:12px;overflow:hidden;flex:1 1 150px;min-width:140px;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.04);">
+                <div style="{{ c.swatchStyle }}">
+                  <button onClick="{{ c.onCopy }}" style="border:1px solid currentColor;background:transparent;color:inherit;border-radius:999px;font-size:11px;font-weight:600;font-family:inherit;padding:4px 10px;cursor:pointer;opacity:.85;">Copy</button>
+                </div>
+                <div style="padding:11px 12px 12px;display:flex;flex-direction:column;gap:7px;">
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;letter-spacing:.02em;">{{ c.hex }}</div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#857c70;">{{ c.rgb }}</div>
+                  <div style="display:flex;align-items:center;gap:7px;">
+                    <div style="flex:1;height:5px;border-radius:999px;background:#f4efe7;overflow:hidden;">
+                      <div style="{{ c.barStyle }}"></div>
+                    </div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#857c70;min-width:26px;text-align:right;">{{ c.pctLabel }}</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:#1c1917;color:#fff;padding:9px 16px;border-radius:999px;font-size:12.5px;font-weight:500;box-shadow:0 6px 24px rgba(0,0,0,.18);z-index:60;animation:ps-pop .2s ease;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:840,&quot;height&quot;:540},&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;empty&quot;,&quot;loading&quot;,&quot;result&quot;,&quot;error&quot;],&quot;default&quot;:&quot;result&quot;,&quot;tsType&quot;:&quot;'empty'|'loading'|'result'|'error'&quot;},&quot;interactive&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onNav&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(action: string) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { toast:null };
+
+  hexToRgb(hex){ const n=parseInt(hex.slice(1),16); return [(n>>16)&255,(n>>8)&255,n&255]; }
+
+  buildColors(){
+    const data=[['#E4B48C',34],['#C98F6E',24],['#7B9A92',16],['#B5746A',12],['#3F5E58',9],['#E8D5BE',5]];
+    return data.map(([hex,pct])=>{
+      const [r,g,b]=this.hexToRgb(hex);
+      const fg = (0.299*r+0.587*g+0.114*b)>148 ? '#1c1917' : '#ffffff';
+      return {
+        hex, rgb:`rgb(${r}, ${g}, ${b})`, pct,
+        pctLabel: pct+'%',
+        swatchStyle:{ background:hex, color:fg, height:'84px', display:'flex', alignItems:'flex-end', justifyContent:'flex-end', padding:'10px' },
+        barStyle:{ width:Math.max(3,pct)+'%', height:'100%', background:hex },
+        ribbonStyle:{ flex:`${pct} 1 0`, background:hex },
+        onCopy:()=>this.copyText(hex, hex+' copied'),
+      };
+    });
+  }
+
+  copyText(text,msg){ try{ navigator.clipboard && navigator.clipboard.writeText(text); }catch(e){} this.setState({toast:msg}); clearTimeout(this._t); this._t=setTimeout(()=>this.setState({toast:null}),1500); }
+
+  go(){ if(this.props.interactive && this.props.onNav) this.props.onNav('upload'); }
+  back(){ if(this.props.interactive && this.props.onNav) this.props.onNav('reset'); }
+  simErr(){ if(this.props.interactive && this.props.onNav) this.props.onNav('error'); }
+
+  renderVals(){
+    const s = this.props.screen || 'empty';
+    const colors = this.buildColors();
+    const interactive = !!this.props.interactive;
+    return {
+      isError: s==='error',
+      isLoading: s==='loading',
+      isResult: s==='result',
+      showUpload: s==='empty' || s==='error',
+      showReset: (s==='result' || s==='error'),
+      canError: interactive && s==='empty',
+      colors,
+      toast: this.state.toast,
+      pillStyle:{ padding:'7px 12px', border:'1px solid #e9e3d9', background:'#f7f4ef', color:'#1c1917', borderRadius:'999px', fontSize:'12px', fontWeight:600, fontFamily:'inherit', cursor:'pointer' },
+      go:()=>this.go(), back:()=>this.back(), simErr:()=>this.simErr(),
+      copyHex:()=>this.copyText(colors.map(c=>c.hex).join('\n'),'HEX codes copied'),
+      copyRgb:()=>this.copyText(colors.map(c=>c.rgb).join('\n'),'RGB values copied'),
+      copyCss:()=>this.copyText(':root {\n'+colors.map((c,i)=>`  --color-${i+1}: ${c.hex};`).join('\n')+'\n}','CSS variables copied'),
+      copyJson:()=>this.copyText(JSON.stringify(colors.map(c=>({hex:c.hex,rgb:c.rgb,proportion:+(c.pct/100).toFixed(4)})),null,2),'JSON copied'),
+    };
+  }
+}
+</script>
+</body>
+</html>

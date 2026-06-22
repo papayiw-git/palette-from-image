@@ -1,0 +1,19 @@
+# OS / editor junk
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+.vscode/
+.idea/
+
+# Dependencies / build (not used by this prototype, here as a guard)
+node_modules/
+dist/
+
+# Social/marketing working files — kept OUTSIDE the repo in ../social-assets/
+social-post*
+*-social.html
+*-social-*.png
+
+# Playwright render output
+.playwright-mcp/
