@@ -1,5 +1,7 @@
 # Palette From Image
 
+**English** | [ภาษาไทย](README.th.md)
+
 A web app that extracts a color palette from any image. Upload (or drag and drop) a photo, and the app pulls out the dominant colors with their HEX / RGB codes and the share of the frame each color fills. Copy or export the result in one click. All processing runs locally in the browser using Canvas — images are never uploaded to a server.
 
 > **Status: Prototype.** This is a high-fidelity, functional prototype intended for design review and developer handoff — not a production release. Color extraction is fully working; surrounding concerns (routing, persistence, analytics, accessibility audit, browser-support matrix) are out of scope for this stage.
